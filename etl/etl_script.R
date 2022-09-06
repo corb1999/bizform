@@ -103,6 +103,17 @@ cash_money <- function(x) {
 
 # read raw dataset -----------------------------------------------
 
+# function to download the zipped files from the site and then unzip them
+fun_consume <- function(arg1, arg2, arg3) {
+  download.file(url = arg1, 
+                destfile = arg2)
+  unzip(zipfile = arg2, exdir = arg3)
+}
+
+aa <- list('https://www.census.gov/econ/currentdata/datasets/BFS-mf.zip', 
+           paste0(getwd(), '/etl/ore/zip_download'), 
+           paste0(getwd(), '/etl/ore'))
+
 # load a csv file
 loader_path1 <- paste0(getwd(), "/etl/ore/raw_data.csv")
 clockin()
