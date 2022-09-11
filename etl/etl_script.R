@@ -151,10 +151,54 @@ data_dictionary(raw_df)
 
 # with the main dataframe downloaded, fine the supporting dataframes
 
-# raw_lines |> 
-#   filter(line_txt_val == 'cat_idx,cat_code,cat_desc,cat_indent')
+# get the naics lookups
+interim <- raw_lines |>
+  filter(line_txt_val == 'cat_idx,cat_code,cat_desc,cat_indent' | 
+           line_txt_val == 'dt_idx,dt_code,dt_desc,dt_unit')
+
+df_key_naics <- readr::read_csv(loader_path1, 
+                                skip = (interim[1, 2] - 1), 
+                                n_max = (interim[2, 2] - 
+                                           interim[1, 2] - 4))
 
 
+# get the measures lookup
+interim <- raw_lines |>
+  filter(line_txt_val == 'dt_idx,dt_code,dt_desc,dt_unit' | 
+           line_txt_val == 'geo_idx,geo_code,geo_desc')
+
+df_key_measure <- readr::read_csv(loader_path1, 
+                                  skip = (interim[1, 2] - 1), 
+                                  n_max = (interim[2, 2] - 
+                                             interim[1, 2] - 4))
+
+
+# get the states lookup
+interim <- raw_lines |>
+  filter(line_txt_val == 'geo_idx,geo_code,geo_desc' | 
+           line_txt_val == 'per_idx,per_name')
+
+df_key_geo <- readr::read_csv(loader_path1, 
+                              skip = (interim[1, 2] - 1), 
+                              n_max = (interim[2, 2] - 
+                                         interim[1, 2] - 4))
+
+
+# get the time lookup
+interim <- raw_lines |>
+  filter(line_txt_val == 'per_idx,per_name' | 
+           line_txt_val == 'NOTES')
+
+df_key_time <- readr::read_csv(loader_path1, 
+                              skip = (interim[1, 2] - 1), 
+                              n_max = (interim[2, 2] - 
+                                         interim[1, 2] - 3))
+
+# cleanup !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+rm(interim, raw_lines)
+ls()
+trash()
+mem_used()
 
 # ^ -----
 
