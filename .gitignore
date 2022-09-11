@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+*.csv
+*etl/ore/README
+*etl/ore/zip_download

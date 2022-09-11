@@ -114,12 +114,47 @@ aa <- list('https://www.census.gov/econ/currentdata/datasets/BFS-mf.zip',
            paste0(getwd(), '/etl/ore/zip_download'), 
            paste0(getwd(), '/etl/ore'))
 
-# load a csv file
-loader_path1 <- paste0(getwd(), "/etl/ore/raw_data.csv")
+fun_consume(aa[[1]], aa[[2]], aa[[3]])
+
+# cleanup !!!!!!!!!!!!!!!!!!!!!!!!
+rm(aa, fun_consume)
+ls()
+trash()
+mem_used()
+
+
+# set the filepath for the downloaded data
+loader_path1 <- paste0(getwd(), "/etl/ore/BFS-mf.csv")
+
+# read the lines of the csv in raw to find the dataframes w/
+#   this horribly formatted messy file
 clockin()
-raw_df <- read.csv(loader_path1, stringsAsFactors = FALSE)
+raw_lines <- readr::read_lines(file = loader_path1, n_max = 500)
 clockout()
-dim(raw_df)
+
+raw_lines <- cbind(as.data.frame(raw_lines), 
+                   as.data.frame(seq(1, 500, 1)))
+colnames(raw_lines) <- c('line_txt_val', 'line_number')
+
+
+# fint the location in the csv where the data actually starts
+interim <- raw_lines |> 
+  filter(line_txt_val == 'per_idx,cat_idx,dt_idx,geo_idx,is_adj,val')
+# interim[1, 2] - 1
+
+# now that we figure our where the real data starts, read from there
+clockin()
+raw_df <- read.csv(loader_path1, stringsAsFactors = FALSE, 
+                   skip = (interim[1, 2] - 1))
+clockout()
+data_dictionary(raw_df)
+
+# with the main dataframe downloaded, fine the supporting dataframes
+
+# raw_lines |> 
+#   filter(line_txt_val == 'cat_idx,cat_code,cat_desc,cat_indent')
+
+
 
 # ^ -----
 
