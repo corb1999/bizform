@@ -41,3 +41,5 @@ vignettes/*.pdf
 *.csv
 *etl/ore/README
 *etl/ore/zip_download
+
+*.rds

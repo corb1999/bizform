@@ -206,13 +206,84 @@ mem_used()
 
 # cleaning
 clockin()
-dfa <- raw_df %>% clean_names() %>% as_tibble()
+dfa <- raw_df %>% clean_names() %>% as_tibble() %>% 
+  mutate(val = as.integer(val))
 clockout()
 
+# start computing the joins
+
+dfa <- left_join(dfa, df_key_geo, by = "geo_idx")
+
+dfa <- left_join(dfa, df_key_measure, by = "dt_idx")
+
+dfa <- left_join(dfa, df_key_naics, by = "cat_idx")
+
+dfa <- left_join(dfa, df_key_time, by = "per_idx")
+
 # cleanup !!!!!!!!!!!!!!!!!!!
-rm(raw_df)
+rm(raw_df, df_key_geo, df_key_measure, 
+   df_key_naics, df_key_time)
 ls()
 trash()
+data_dictionary(dfa)
+
+# ^ ----- 
+
+# post join data cleaning ----------------------------------------
+
+fix_dates <- data.frame(time_mon_nm = c('Jan', 'Feb', 'Mar', 'Apr', 
+                           'May', 'Jun', 'Jul', 'Aug', 
+                           'Sep', 'Oct', 'Noc', 'Dec'), 
+                        time_mon_num = seq(1, 12))
+
+dfa <- dfa |> 
+  select(-c(per_idx:geo_idx)) |> 
+  rename(measure_val = val) |> 
+  mutate(time_yr = stringr::str_sub(per_name, start = -4L),
+         time_yr = as.integer(time_yr), 
+         time_mon_nm = stringr::str_sub(per_name, end = 3L)) |> 
+  mutate(time_dt = ymd(paste(time_yr, 
+                             time_mon_nm, 
+                             1, sep = '-')))
+
+dfa <- left_join(dfa, fix_dates, by = "time_mon_nm") |> 
+  mutate(time_yrmon = paste0(time_yr, 
+                             '-', 
+                             stringr::str_pad(time_mon_num, 
+                                              width = 2, 
+                                              side = 'left', 
+                                              pad = 0)))
+
+# tests ????????????????????????????????????????????
+test_fun1 <- function(arg_df = dfa) {
+  
+  arg_df <- arg_df |> 
+    filter(dt_desc == 'Business Applications', 
+           cat_code == 'TOTAL', 
+           geo_code == 'US', 
+           is_adj == 0) |> 
+    filter(time_yr >= 2005)
+  
+  df_agg <- arg_df |> 
+    group_by(time_yrmon, time_yr, time_dt) |> 
+    summarise(recs = n(), 
+              measure_val = sum(measure_val))
+  
+  p1 <- df_agg |> 
+    ggplot(aes(x = time_dt, y = measure_val, 
+               color = as.factor(time_yr))) + 
+    geom_line() + 
+    geom_point(size = 1) + 
+    theme(legend.position = 'none')
+  
+  return(p1)
+}
+# test_fun1()
+
+# cleanup !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+rm(fix_dates)
+trash()
+data_dictionary(dfa)
 
 # ^ ----- 
 
