@@ -44,28 +44,46 @@ mem_used()
 
 # viz prep ---------------------------------------------------
 
-dt_filters <- fun_dater('2019-01-01', 
-                        '2020-01-01')
+dt_filters <- fun_dater('2016-01-01', 
+                        '2022-06-01')
 
-major_filter <- c('foo', 'bar')
+# unique(dfa$dt_desc)
+measurement <- 'High-Propensity Business Applications'
+# measurement <- 'Business Applications with Planned Wages'
+# measurement <- 'Business Applications from Corporations'
 
-(pltname <- 'hello ' %ps% 
-    'world; ' %ps% 
-    reduce(major_filter, paste, sep = '; ') %ps% '; ' %ps% 
+(pltname <- 'US Census Bureau Business Formation Data; ' %ps% 
+    # measurement %ps% '; ' %ps% 
+    # other filter ::::::::::::::::::::::::::::::::
+    'US; ' %ps%
+      # 'CA; ' %ps% 
+    'ALL NAICS; ' %ps% 
+    # :::::::::::::::::::::::::::::::::::::::::::::
     dt_filters$date_text_str %ps% 
     '')
 
-dfplt <- dfa %>% 
-  filter(major %in% major_filter) %>% 
-  filter(date_var >= dt_filters$start_date, 
-         date_var <= dt_filters$end_date) %>% 
-  filter(foobar == 1)
+dfplt <- dfa |> 
+  # choose measure to filter down to ::::::::::::::::::::
+  filter(dt_desc == measurement) |> 
+  # :::::::::::::::::::::::::::::::::::::::::::::::::::::
+  # other key filters :::::::::::::::::::::::::::::::::::
+  filter(geo_code == 'US') |>
+    # filter(geo_code == 'CA') |> 
+  filter(cat_code == 'TOTAL') |> 
+  # :::::::::::::::::::::::::::::::::::::::::::::::::::::
+  filter(time_dt >= dt_filters$start_date, 
+         time_dt <= dt_filters$end_date) |> 
+  # turn off adj vals ::::::::::::::::::::::::::::::::::
+  filter(is_adj == 0) |> 
+  # ::::::::::::::::::::::::::::::::::::::::::::::::::::
+  filter(measure_val > 0)
 
 # ^ -----
 
 # run plots and visuals ------------------------------------
 
+fun_plt_macro_trend1()
 
-
+fun_plt_macro_yoy1()
 
 # ^ -----
