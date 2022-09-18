@@ -12,6 +12,7 @@ library(tidylog)
 library(lubridate)
 library(scales)
 library(gt)
+library(janitor)
 set.seed(metadatar$seed_set[1])
 options(digits = 4, max.print = 99, warnPartialMatchDollar = TRUE, 
         tibble.print_max = 30, scipen = 999, nwarnings = 5, 
@@ -89,7 +90,30 @@ clockout()
 dim(raw_df)
 
 # any last minute cleaning
-dfa <- raw_df
+dfa <- raw_df |>
+  mutate(max_grain_ind = ifelse(geo_code == 'US' & 
+                                  cat_code == 'TOTAL', 
+                                TRUE, FALSE), 
+         geo_grain_ind = ifelse(geo_code != 'US' & 
+                                  geo_code != 'NO' & 
+                                  geo_code != 'MW' & 
+                                  geo_code != 'SO' & 
+                                  geo_code != 'WE', 
+                                TRUE, FALSE), 
+         naics_grain_ind = ifelse(cat_code != 'TOTAL', 
+                                  TRUE, FALSE))
+
+# make a version of the data at a tidy grain of state
+dfb <- dfa |>
+  filter(geo_grain_ind == TRUE) |> 
+  pivot_wider(names_from = dt_desc, values_from = measure_val) |> 
+  clean_names()
+
+# make a version of the data tidy but by naics
+dfc <- dfa |>
+  filter(naics_grain_ind == TRUE) |> 
+  pivot_wider(names_from = dt_desc, values_from = measure_val) |> 
+  clean_names()
 
 # cleanup !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 rm(raw_df)
