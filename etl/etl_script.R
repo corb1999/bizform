@@ -233,7 +233,7 @@ data_dictionary(dfa)
 
 fix_dates <- data.frame(time_mon_nm = c('Jan', 'Feb', 'Mar', 'Apr', 
                            'May', 'Jun', 'Jul', 'Aug', 
-                           'Sep', 'Oct', 'Noc', 'Dec'), 
+                           'Sep', 'Oct', 'Nov', 'Dec'), 
                         time_mon_num = seq(1, 12))
 
 dfa <- dfa |> 
