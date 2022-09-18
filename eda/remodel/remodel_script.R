@@ -146,3 +146,7 @@ etl_metadata
 
 
 # ^ -----
+
+source(file = paste0('https://raw.githubusercontent.com/', 
+                     'corb1999/cheatcraft/', 
+                     'main/gg_helper/my_gg/my_gg_settings.R'))
