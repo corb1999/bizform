@@ -29,4 +29,25 @@ fun_plt_macro_trend1 <- function(arg_df = dfplt,
 }
 
 # tests ?????????????????????????
-fun_plt_macro_trend1()
+# fun_plt_macro_trend1()
+
+# simple yoy macro plot --------------------------
+
+fun_plt_macro_yoy1 <- function(arg_df = dfplt, 
+                                 arg_pltnm = pltname) {
+  p1 <- arg_df |> 
+    ggplot(aes(x = time_mon_num, y = measure_val)) + 
+    geom_line(aes(color = as.factor(time_yr)), 
+              size = 0.9) + 
+    geom_point(aes(color = as.factor(time_yr)), 
+               size = 2) + 
+    scale_x_continuous(breaks = seq(1, 12, 1)) + 
+    scale_color_brewer(palette = 'Set1') + 
+    labs(subtitle = arg_pltnm, color = '', 
+         y = measurement, x = 'Month')
+  p2 <- my_gg(p1)
+  return(p2)
+}
+
+# tests ????????????????????????????
+# fun_plt_macro_yoy1()

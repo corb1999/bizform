@@ -47,15 +47,17 @@ mem_used()
 dt_filters <- fun_dater('2016-01-01', 
                         '2022-06-01')
 
-unique(dfa$dt_desc)
-# measurement <- 'High-Propensity Business Applications'
+# unique(dfa$dt_desc)
+measurement <- 'High-Propensity Business Applications'
 # measurement <- 'Business Applications with Planned Wages'
-measurement <- 'Business Applications from Corporations'
+# measurement <- 'Business Applications from Corporations'
 
 (pltname <- 'US Census Bureau Business Formation Data; ' %ps% 
     # measurement %ps% '; ' %ps% 
     # other filter ::::::::::::::::::::::::::::::::
-    'US; ALL NAICS; ' %ps% 
+    'US; ' %ps%
+      # 'CA; ' %ps% 
+    'ALL NAICS; ' %ps% 
     # :::::::::::::::::::::::::::::::::::::::::::::
     dt_filters$date_text_str %ps% 
     '')
@@ -65,7 +67,8 @@ dfplt <- dfa |>
   filter(dt_desc == measurement) |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   # other key filters :::::::::::::::::::::::::::::::::::
-  filter(geo_code == 'US') |> 
+  filter(geo_code == 'US') |>
+    # filter(geo_code == 'CA') |> 
   filter(cat_code == 'TOTAL') |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   filter(time_dt >= dt_filters$start_date, 
@@ -81,5 +84,6 @@ dfplt <- dfa |>
 
 fun_plt_macro_trend1()
 
+fun_plt_macro_yoy1()
 
 # ^ -----
