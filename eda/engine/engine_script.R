@@ -121,7 +121,7 @@ fun_plt_index1 <- function(arg_df = dfplt,
     labs(caption = 'Indexed against ' %ps% arg_indexyr, 
          y = arg_measurement, 
          x = '', title = arg_pltnm, 
-         subtitle = 'Black = US Total; ' %ps% 
+         subtitle = 'Black = US Total Baseline; ' %ps% 
            'Red = Filtered Cell Comparison; ')
   
   p1 <- my_gg(p1) + 

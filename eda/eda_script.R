@@ -52,7 +52,7 @@ dt_filters <- fun_dater('2015-01-01',
 measurement <- 'Business Applications with Planned Wages'
 # measurement <- 'Business Applications from Corporations'
 
-plt_geo <- 'FL'
+plt_geo <- 'GA'
 
 (pltname <- 'US Census Bureau Business Formation Data; ' %ps% 
     # other filter ::::::::::::::::::::::::::::::::
@@ -87,5 +87,39 @@ fun_plt_macro_trend2(arg_months = c(1, 6))
 # fun_plt_macro_yoy1()
 
 fun_plt_index1(arg_indexyr = 2015)
+
+# ^ -----
+
+# plot printer iterator ----------------------------------
+# designed to print plots for a vector of states
+
+geo_vec <- c('FL', 'GA', 'NC', 'SC')
+
+(pltname2 <- 'US Census Bureau Business Formation Data; ' %ps% 
+    'ALL NAICS; ' %ps% 
+    dt_filters$date_text_str %ps% 
+    '')
+
+dfb <- dfa |> filter(cat_code == 'TOTAL') |> 
+  filter(dt_desc == measurement) |>
+  filter(time_dt >= dt_filters$start_date, 
+         time_dt <= dt_filters$end_date) |> 
+  filter(is_adj == 0) |> filter(measure_val > 0)
+
+fun_printer <- function(arg1) {
+  aa <- pltname2 %ps% '_' %ps% arg1
+  bb <- dfb |> filter(geo_code == arg1)
+  # function to iterate :::::::::::::::::::
+  cc <- fun_plt_macro_trend1(arg_df = bb, arg_pltnm = aa)
+  # :::::::::::::::::::::::::::::::::::::::
+  qp(pltname = ('census_nb_applications_' %ps% arg1), 
+     pltpath_suffix = '/printer_tray')
+}
+
+
+clockin()
+walk(.x = geo_vec, .f = fun_printer)
+clockout()
+
 
 # ^ -----

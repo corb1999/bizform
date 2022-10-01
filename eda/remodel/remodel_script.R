@@ -150,3 +150,24 @@ etl_metadata
 source(file = paste0('https://raw.githubusercontent.com/', 
                      'corb1999/cheatcraft/', 
                      'main/gg_helper/my_gg/my_gg_settings.R'))
+
+# quick plot saving function -------------------------------------------
+
+# require(lubridate)
+qp <- function(pltname, pltpath_suffix = NA, plt_inch = 5) {
+  plt_timestamp <- paste(year(Sys.time()), month(Sys.time()),  
+                         day(Sys.time()), hour(Sys.time()), minute(Sys.time()), 
+                         floor(second(Sys.time())), sep = "-")
+  aa <- ifelse(is.na(pltpath_suffix), "", pltpath_suffix)
+  plt_filepath <- paste0(getwd(), aa)
+  plt_name <- paste0("plt_", pltname, "_", plt_timestamp, ".png")
+  ggsave(filename = plt_name, plot = last_plot(), 
+         path = plt_filepath, scale = 1, device = "png", 
+         height = plt_inch, width = plt_inch * 1.61803399, units = "in")}
+
+
+# test the plot saver +++++++++++++++++++++++++++++++++++++
+# ggplot(data = mtcars, aes(mpg)) + geom_histogram()
+# qp(pltname = "test")
+
+# ^ -----
