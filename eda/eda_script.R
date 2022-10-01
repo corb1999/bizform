@@ -44,19 +44,19 @@ mem_used()
 
 # viz prep ---------------------------------------------------
 
-dt_filters <- fun_dater('2016-01-01', 
-                        '2022-06-01')
+dt_filters <- fun_dater('2015-01-01', 
+                        '2022-08-01')
 
 # unique(dfa$dt_desc)
-measurement <- 'High-Propensity Business Applications'
-# measurement <- 'Business Applications with Planned Wages'
+# measurement <- 'High-Propensity Business Applications'
+measurement <- 'Business Applications with Planned Wages'
 # measurement <- 'Business Applications from Corporations'
 
+plt_geo <- 'FL'
+
 (pltname <- 'US Census Bureau Business Formation Data; ' %ps% 
-    # measurement %ps% '; ' %ps% 
     # other filter ::::::::::::::::::::::::::::::::
-    'US; ' %ps%
-      # 'CA; ' %ps% 
+    plt_geo %ps% '; ' %ps% 
     'ALL NAICS; ' %ps% 
     # :::::::::::::::::::::::::::::::::::::::::::::
     dt_filters$date_text_str %ps% 
@@ -67,8 +67,7 @@ dfplt <- dfa |>
   filter(dt_desc == measurement) |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   # other key filters :::::::::::::::::::::::::::::::::::
-  filter(geo_code == 'US') |>
-    # filter(geo_code == 'CA') |> 
+  filter(geo_code == plt_geo) |>
   filter(cat_code == 'TOTAL') |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   filter(time_dt >= dt_filters$start_date, 
@@ -83,7 +82,10 @@ dfplt <- dfa |>
 # run plots and visuals ------------------------------------
 
 fun_plt_macro_trend1()
+fun_plt_macro_trend2(arg_months = c(1, 6))
 
-fun_plt_macro_yoy1()
+# fun_plt_macro_yoy1()
+
+fun_plt_index1(arg_indexyr = 2015)
 
 # ^ -----
