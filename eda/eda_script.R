@@ -44,19 +44,19 @@ mem_used()
 
 # viz prep ---------------------------------------------------
 
-dt_filters <- fun_dater('2016-01-01', 
-                        '2022-06-01')
+dt_filters <- fun_dater('2015-01-01', 
+                        '2022-08-01')
 
 # unique(dfa$dt_desc)
-measurement <- 'High-Propensity Business Applications'
-# measurement <- 'Business Applications with Planned Wages'
+# measurement <- 'High-Propensity Business Applications'
+measurement <- 'Business Applications with Planned Wages'
 # measurement <- 'Business Applications from Corporations'
 
+plt_geo <- 'GA'
+
 (pltname <- 'US Census Bureau Business Formation Data; ' %ps% 
-    # measurement %ps% '; ' %ps% 
     # other filter ::::::::::::::::::::::::::::::::
-    'US; ' %ps%
-      # 'CA; ' %ps% 
+    plt_geo %ps% '; ' %ps% 
     'ALL NAICS; ' %ps% 
     # :::::::::::::::::::::::::::::::::::::::::::::
     dt_filters$date_text_str %ps% 
@@ -67,8 +67,7 @@ dfplt <- dfa |>
   filter(dt_desc == measurement) |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   # other key filters :::::::::::::::::::::::::::::::::::
-  filter(geo_code == 'US') |>
-    # filter(geo_code == 'CA') |> 
+  filter(geo_code == plt_geo) |>
   filter(cat_code == 'TOTAL') |> 
   # :::::::::::::::::::::::::::::::::::::::::::::::::::::
   filter(time_dt >= dt_filters$start_date, 
@@ -83,7 +82,49 @@ dfplt <- dfa |>
 # run plots and visuals ------------------------------------
 
 fun_plt_macro_trend1()
+fun_plt_macro_trend2(arg_months = c(1, 6))
 
-fun_plt_macro_yoy1()
+# fun_plt_macro_yoy1()
+
+fun_plt_index1(arg_indexyr = 2015)
+
+# ^ -----
+
+# plot printer iterator ----------------------------------
+# designed to print plots for a vector of states
+
+geo_vec <- c('FL', 'GA', 'NC', 'SC', 
+             'MD', 'VA', 'TN')
+
+(pltname2 <- 'US Census Bureau Business Formation Data; ' %ps% 
+    'ALL NAICS; ' %ps% 
+    dt_filters$date_text_str %ps% 
+    '')
+
+dfb <- dfa |> filter(cat_code == 'TOTAL') |> 
+  filter(dt_desc == measurement) |>
+  filter(time_dt >= dt_filters$start_date, 
+         time_dt <= dt_filters$end_date) |> 
+  filter(is_adj == 0) |> filter(measure_val > 0)
+
+fun_printer <- function(arg1) {
+  aa <- pltname2 %ps% '_' %ps% arg1
+  bb <- dfb |> filter(geo_code == arg1)
+  # function to iterate :::::::::::::::::::
+  # cc <- fun_plt_macro_trend1(arg_df = bb, arg_pltnm = aa)
+  # cc <- fun_plt_macro_trend2(arg_df = bb, arg_pltnm = aa, 
+  #                            arg_months = c(1, 8))
+  cc <- fun_plt_index1(arg_df = bb, arg_pltnm = aa, 
+                       arg_indexyr = 2015)
+  # :::::::::::::::::::::::::::::::::::::::
+  qp(pltname = ('census_nb_applications_' %ps% arg1), 
+     pltpath_suffix = '/printer_tray')
+}
+
+
+clockin()
+walk(.x = geo_vec, .f = fun_printer)
+clockout()
+
 
 # ^ -----
