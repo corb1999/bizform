@@ -93,7 +93,8 @@ fun_plt_index1(arg_indexyr = 2015)
 # plot printer iterator ----------------------------------
 # designed to print plots for a vector of states
 
-geo_vec <- c('FL', 'GA', 'NC', 'SC')
+geo_vec <- c('FL', 'GA', 'NC', 'SC', 
+             'MD', 'VA', 'TN')
 
 (pltname2 <- 'US Census Bureau Business Formation Data; ' %ps% 
     'ALL NAICS; ' %ps% 
@@ -110,7 +111,11 @@ fun_printer <- function(arg1) {
   aa <- pltname2 %ps% '_' %ps% arg1
   bb <- dfb |> filter(geo_code == arg1)
   # function to iterate :::::::::::::::::::
-  cc <- fun_plt_macro_trend1(arg_df = bb, arg_pltnm = aa)
+  # cc <- fun_plt_macro_trend1(arg_df = bb, arg_pltnm = aa)
+  # cc <- fun_plt_macro_trend2(arg_df = bb, arg_pltnm = aa, 
+  #                            arg_months = c(1, 8))
+  cc <- fun_plt_index1(arg_df = bb, arg_pltnm = aa, 
+                       arg_indexyr = 2015)
   # :::::::::::::::::::::::::::::::::::::::
   qp(pltname = ('census_nb_applications_' %ps% arg1), 
      pltpath_suffix = '/printer_tray')
